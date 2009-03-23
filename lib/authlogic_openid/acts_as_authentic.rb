@@ -9,8 +9,7 @@ module AuthlogicOpenid
     module Methods
       def self.included(klass)
         klass.class_eval do
-          alias_method_chain :save, :openid
-          #validates_uniqueness_of :openid_identifier, :scope => validations_scope, :if => :using_openid?
+          validates_uniqueness_of :openid_identifier, :scope => validations_scope, :if => :using_openid?
           validate :validate_openid
           [:validates_length_of_login_field_options, :validates_format_of_login_field_options,
             :validates_confirmation_of_password_field_options, :validates_length_of_password_confirmation_field_options].each do |method|
@@ -19,10 +18,10 @@ module AuthlogicOpenid
         end
       end
       
-      def save_with_openid(*args, &block)
+      def save(*args, &block)
         normalize_openid_identifier if using_openid?
         if !authenticate_with_openid? || (authenticate_with_openid? && authenticate_with_openid)
-          result = save_without_openid(*args)
+          result = super
           yield(result) if block_given?
           result
         else
