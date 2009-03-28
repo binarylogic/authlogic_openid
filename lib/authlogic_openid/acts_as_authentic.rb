@@ -11,7 +11,7 @@ module AuthlogicOpenid
         klass.class_eval do
           validates_uniqueness_of :openid_identifier, :scope => validations_scope, :if => :using_openid?
           validate :validate_openid
-          [:validates_length_of_login_field_options, :validates_format_of_login_field_options,
+          [:validates_length_of_login_field_options, :validates_format_of_login_field_options, :validates_length_of_password_field_options,
             :validates_confirmation_of_password_field_options, :validates_length_of_password_confirmation_field_options].each do |method|
               send(method, send(method).merge(:unless => :using_openid?))
           end
@@ -75,10 +75,6 @@ module AuthlogicOpenid
         
         def authenticate_with_openid?
           session_class.activated? && ((using_openid? && openid_identifier_changed?) || openid_complete?)
-        end
-        
-        def redirecting_to_openid?
-          @redirecting_to_openid == true
         end
     end
   end

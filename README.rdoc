@@ -30,11 +30,14 @@ Authlogic OpenID is an extension of the Authlogic library to add OpenID support.
 
 === 2. Install the openid_authentication plugin
 
-  script/plugin install git://github.com/rails/open_id_authentication.git
+  $ script/plugin install git://github.com/rails/open_id_authentication.git
+  $ rake open_id_authentication:db:create
+
+For more information on how to configure the plugin, checkout it's README: http://github.com/rails/open_id_authentication/tree/master
 
 === 3. Install the Authlogic Openid gem
 
-  sudo gem install authlogic-oid
+  $ sudo gem install authlogic-oid
 
 Now add the gem dependency in your config:
 
@@ -42,7 +45,7 @@ Now add the gem dependency in your config:
 
 Or for older version of rails, install it as a plugin:
 
-  script/plugin install git://github.com/binarylogic/authlogic_openid.git
+  $ script/plugin install git://github.com/binarylogic/authlogic_openid.git
 
 === 4. Make sure you save your objects properly
 
@@ -75,7 +78,7 @@ It's that simple. For more information there is a great OpenID tutorial at: http
 
 Now, here are my thoughts on the subject:
 
-You are probably thinking: "Ben, you can't handle controller responsibilities in models". I would agree with you on that comment, because my personal opinion is that these are not controller responsibilities. The fact that OpenID authentication requires a redirect should not effect the location of the logic / code. It's all part of the authentication process, which is the entire purpose of this library. The logic that handles this process should be in it's own domain, which is the definition of the "M" in MVC. The "M" doesn't have to just be a data access layer, it's a place for domain logic.
+You are probably thinking: "Ben, you can't handle controller responsibilities in models". I agree with you on that comment, but my personal opinion is that these are not controller responsibilities. The fact that OpenID authentication requires a redirect should not effect the location of the logic / code. It's all part of the authentication process, which is the entire purpose of this library. The logic that handles this process should be in it's own domain, which is the definition of the "M" in MVC. The "M" doesn't have to just be a data access layer, it's a place for domain logic.
 
 What if you wanted to authenticate with OpenID in multiple controllers in your application? You would probably pull out the common code into a module and include it in the respective controllers. Even better, you might create a class that elegantly handles this process and then place it in your lib directory. That's exactly what this is.
 
