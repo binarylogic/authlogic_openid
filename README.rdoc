@@ -6,6 +6,7 @@ Authlogic OpenID is an extension of the Authlogic library to add OpenID support.
 
 *	<b>Documentation:</b> http://authlogic.rubyforge.org
 *	<b>Authlogic:</b> http://github.com/binarylogic/authlogic
+*	<b>Live example:</b> http://authlogicexample.binarylogic.com
 
 == Install and use
 
