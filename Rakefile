@@ -4,7 +4,7 @@ require "rubygems"
 require "hoe"
 require File.dirname(__FILE__) << "/lib/authlogic_openid/version"
 
-Hoe.new("Authlogic OpenID", AuthlogicOpenId::Version::STRING) do |p|
+Hoe.new("Authlogic OpenID", AuthlogicOpenid::Version::STRING) do |p|
   p.name = "authlogic-oid"
   p.author = "Ben Johnson of Binary Logic"
   p.email  = 'bjohnson@binarylogic.com'
@@ -14,6 +14,6 @@ Hoe.new("Authlogic OpenID", AuthlogicOpenId::Version::STRING) do |p|
   p.history_file = "CHANGELOG.rdoc"
   p.readme_file = "README.rdoc"
   p.extra_rdoc_files = ["CHANGELOG.rdoc", "README.rdoc"]
-  p.test_globs = ["test/*/test_*.rb", "test/*/*_test.rb"]
+  p.test_globs = ["test/*/test_*.rb", "test/*_test.rb", "test/*/*_test.rb"]
   p.extra_deps = %w(authlogic)
 end
