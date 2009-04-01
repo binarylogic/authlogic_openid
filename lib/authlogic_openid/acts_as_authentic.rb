@@ -78,6 +78,7 @@ module AuthlogicOpenid
             if result.unsuccessful?
               @openid_error = result.message
             else
+              self.openid_identifier = openid_identifier
               map_openid_registration(registration)
             end
             
@@ -90,7 +91,7 @@ module AuthlogicOpenid
         def map_openid_registration(registration)
           self.name ||= registration[:fullname] if respond_to?(:name) && !registration[:fullname].blank?
           self.first_name ||= registration[:fullname].split(" ").first if respond_to?(:first_name) && !registration[:fullname].blank?
-          self.first_name ||= registration[:fullname].split(" ").last if respond_to?(:last_name) && !registration[:last_name].blank?
+          self.last_name ||= registration[:fullname].split(" ").last if respond_to?(:last_name) && !registration[:last_name].blank?
         end
         
         def validate_openid

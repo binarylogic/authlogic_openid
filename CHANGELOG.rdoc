@@ -1,3 +1,8 @@
+== 1.0.3
+
+* Added find_by_openid_identifier config option for the session.
+* Set the openid_identifier by the one passed back by the provider.
+
 == 1.0.2 released 2009-3-30
 
 * Remove config block in initializer.
