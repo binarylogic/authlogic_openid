@@ -1,7 +1,9 @@
 == 1.0.3
 
-* Added find_by_openid_identifier config option for the session.
-* Set the openid_identifier by the one passed back by the provider.
+* Added find_by_openid_identifier config option for AuthlogicOpenid::Session.
+* Set the openid_identifier by the one passed back by the provider in AuthlogicOpenid::ActsAsAuthentic.
+* Added required_fields and optional_fields config options for AuthlogicOpenid::ActsAsAuthentic.
+* Added map_openid_registration, attributes_to_save, and map_saved_attributes methods to customize how attributes are set for AuthlogicOpenid::ActsAsAuthentic.
 
 == 1.0.2 released 2009-3-30
 
