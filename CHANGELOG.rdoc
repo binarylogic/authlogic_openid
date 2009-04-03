@@ -4,6 +4,7 @@
 * Set the openid_identifier by the one passed back by the provider in AuthlogicOpenid::ActsAsAuthentic.
 * Added required_fields and optional_fields config options for AuthlogicOpenid::ActsAsAuthentic.
 * Added map_openid_registration, attributes_to_save, and map_saved_attributes methods to customize how attributes are set for AuthlogicOpenid::ActsAsAuthentic.
+* Make authenticating_with_openid? method a little more stringent to avoid trying to double authenticate. Ex: finding a session in the save block during a successful save.
 
 == 1.0.2 released 2009-3-30
 
