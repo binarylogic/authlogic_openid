@@ -13,7 +13,7 @@ class ActsAsAuthenticTest < ActiveSupport::TestCase
     user.login = "sweet"
     user.email = "a@a.com"
     user.openid_identifier = "https://me.yahoo.com/a/9W0FJjRj0o981TMSs0vqVxPdmMUVOQ--"
-    assert !user.save # because we are redirecting, the user was NOT saved
+    assert !user.save {} # because we are redirecting, the user was NOT saved
     assert redirecting_to_yahoo?
   end
   
@@ -32,7 +32,7 @@ class ActsAsAuthenticTest < ActiveSupport::TestCase
     assert ben.save
   end
   
-  def test_password__required_on_update
+  def test_password_required_on_update
     ben = users(:ben)
     ben.openid_identifier = nil
     assert_nil ben.crypted_password
@@ -68,7 +68,7 @@ class ActsAsAuthenticTest < ActiveSupport::TestCase
   def test_updating_with_openid
     ben = users(:ben)
     ben.openid_identifier = "https://me.yahoo.com/a/9W0FJjRj0o981TMSs0vqVxPdmMUVOQ--"
-    assert !ben.save # because we are redirecting
+    assert !ben.save {} # because we are redirecting
     assert redirecting_to_yahoo?
   end
   
@@ -86,5 +86,20 @@ class ActsAsAuthenticTest < ActiveSupport::TestCase
     ben.openid_identifier = "https://me.yahoo.com/a/9W0FJjRj0o981TMSs0vqVxPdmMUVOQ--"
     assert ben.save(false)
     assert !redirecting_to_yahoo?
+  end
+  
+  def test_updating_without_a_block
+    ben = users(:ben)
+    ben.openid_identifier = "https://me.yahoo.com/a/9W0FJjRj0o981TMSs0vqVxPdmMUVOQ--"
+    assert ben.save
+    ben.reload
+    assert_equal "https://me.yahoo.com/a/9W0FJjRj0o981TMSs0vqVxPdmMUVOQ--", ben.openid_identifier
+  end
+  
+  def test_updating_while_not_activated
+    UserSession.controller = nil
+    ben = users(:ben)
+    ben.openid_identifier = "https://me.yahoo.com/a/9W0FJjRj0o981TMSs0vqVxPdmMUVOQ--"
+    assert ben.save {}
   end
 end

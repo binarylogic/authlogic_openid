@@ -1,3 +1,7 @@
+== 1.0.4
+
+* Only authenticate with OpenID for models when a block is passed.
+
 == 1.0.3 released 2009-4-3
 
 * Added find_by_openid_identifier config option for AuthlogicOpenid::Session.
