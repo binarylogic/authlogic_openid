@@ -1,6 +1,8 @@
-== 1.0.4
+== 1.0.4 released 2009-5-14
 
 * Only authenticate with OpenID for models when a block is passed.
+* Check for the existence of an openid_identifier field before including the model. Allowing this library to only be activated when present.
+* Change required_field and optional_fields to openid_required_field and openid_optional_fields
 
 == 1.0.3 released 2009-4-3
 

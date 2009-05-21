@@ -22,24 +22,26 @@ module AuthlogicOpenid
       #
       # * <tt>Default:</tt> []
       # * <tt>Accepts:</tt> Array of symbols
-      def required_fields(value = nil)
-        config(:required_fields, value, [])
+      def openid_required_fields(value = nil)
+        rw_config(:openid_required_fields, value, [])
       end
-      alias_method :required_fields=, :required_fields
+      alias_method :openid_required_fields=, :openid_required_fields
       
       # Same as required_fields, but optional instead.
       #
       # * <tt>Default:</tt> []
       # * <tt>Accepts:</tt> Array of symbols
-      def optional_fields(value = nil)
-        config(:optional_fields, value, [])
+      def openid_optional_fields(value = nil)
+        rw_config(:openid_optional_fields, value, [])
       end
-      alias_method :optional_fields=, :optional_fields
+      alias_method :openid_optional_fields=, :openid_optional_fields
     end
     
     module Methods
       # Set up some simple validations
       def self.included(klass)
+        return if !klass.column_names.include?("openid_identifier")
+        
         klass.class_eval do
           validates_uniqueness_of :openid_identifier, :scope => validations_scope, :if => :using_openid?
           validate :validate_openid
@@ -86,8 +88,8 @@ module AuthlogicOpenid
           end
           
           options = {}
-          options[:required] = self.class.required_fields
-          options[:optional] = self.class.optional_fields
+          options[:required] = self.class.openid_required_fields
+          options[:optional] = self.class.openid_optional_fields
           options[:return_to] = session_class.controller.url_for(:for_model => "1")
           
           session_class.controller.send(:authenticate_with_open_id, openid_identifier, options) do |result, openid_identifier, registration|
@@ -124,7 +126,7 @@ module AuthlogicOpenid
         # more just override this method and do whatever you want.
         def attributes_to_save # :doc:
           attrs_to_save = attributes.clone.delete_if do |k, v|
-            [:password, crypted_password_field, password_salt_field, :persistence_token, :perishable_token, :single_access_token, :login_count, 
+            [:id, :password, crypted_password_field, password_salt_field, :persistence_token, :perishable_token, :single_access_token, :login_count, 
               :failed_login_count, :last_request_at, :current_login_at, :last_login_at, :current_login_ip, :last_login_ip, :created_at,
               :updated_at, :lock_version].include?(k.to_sym)
           end
@@ -148,7 +150,7 @@ module AuthlogicOpenid
         end
         
         def using_openid?
-          !openid_identifier.blank?
+          respond_to?(:openid_identifier) && !openid_identifier.blank?
         end
         
         def openid_complete?

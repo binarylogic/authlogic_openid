@@ -1,1 +1,1 @@
-require "authlogic_openid"
+require File.dirname(__FILE__) + "/rails/init.rb"

@@ -25,7 +25,7 @@ module AuthlogicOpenid
       # * <tt>Default:</tt> :find_by_openid_identifier
       # * <tt>Accepts:</tt> Symbol
       def find_by_openid_identifier_method(value = nil)
-        config(:find_by_openid_identifier_method, value, :find_by_openid_identifier)
+        rw_config(:find_by_openid_identifier_method, value, :find_by_openid_identifier)
       end
       alias_method :find_by_openid_identifier_method=, :find_by_openid_identifier_method
     end
@@ -72,11 +72,14 @@ module AuthlogicOpenid
         end
         
         def validate_by_openid
-          controller.send(:authenticate_with_open_id, openid_identifier, :return_to => controller.url_for(:for_session => "1")) do |result, openid_identifier|
+          self.remember_me = controller.params[:remember_me] == "true" if controller.params.key?(:remember_me)
+          controller.send(:authenticate_with_open_id, openid_identifier, :return_to => controller.url_for(:for_session => "1", :remember_me => remember_me?)) do |result, openid_identifier|
             if result.unsuccessful?
               errors.add_to_base(result.message)
               return
             end
+            
+            raise "#{openid_identifier.inspect} ::: #{controller.params["openid.claimed_id"]}"
             
             self.attempted_record = klass.send(find_by_openid_identifier_method, openid_identifier)
             

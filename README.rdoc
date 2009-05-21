@@ -74,7 +74,7 @@ That's it! The rest is taken care of for you.
 
 == Redirecting from the models?
 
-If you are interested, I explain myself below. Regardless, you don't have to use this library. As you saw in the setup instructions, this library leverages the open_id_authentication rails plugin. You can EASILY use this in your controllers and do your traditional OpenID authentication yourself. After the user has been authenticated just do this:
+If you are interested, I explain myself below. Regardless, if you don't feel comfortable with the organization of the logic,you can easily do this using the traditional method. As you saw in the setup instructions, this library leverages the open_id_authentication rails plugin. After the user has been authenticated just do this:
 
   UserSession.create(@user)
 
@@ -82,11 +82,11 @@ It's that simple. For more information there is a great OpenID tutorial at: http
 
 Now, here are my thoughts on the subject:
 
-You are probably thinking: "Ben, you can't handle controller responsibilities in models". I agree with you on that comment, but my personal opinion is that these are not controller responsibilities. The fact that OpenID authentication requires a redirect should not effect the location of the logic / code. It's all part of the authentication process, which is the entire purpose of this library. The logic that handles this process should be in it's own domain, which is the definition of the "M" in MVC. The "M" doesn't have to just be a data access layer, it's a place for domain logic.
+You are probably thinking: "Ben, you can't handle controller responsibilities in models". I agree with you on that comment, but my personal opinion is that these are not controller responsibilities. The fact that OpenID authentication requires a redirect should not effect the location of the logic / code. It's all part of the authentication process, which is the entire purpose of this library. This library is not one big module of code, its a collection of modules that all deal with OpenID authentication. These modules get included wherever it makes sense. That's the whole idea behind modules. To group common logic.
 
-What if you wanted to authenticate with OpenID in multiple controllers in your application? You would probably pull out the common code into a module and include it in the respective controllers. Even better, you might create a class that elegantly handles this process and then place it in your lib directory. That's exactly what this is.
+Let's take a step back and look at the traditional method of OpenID authentication in rails. What if you wanted to authenticate with OpenID in multiple controllers in your application (Ex: registration and loggin in)? You would probably pull out the common code into a module and include it in the respective controllers. Even better, you might create a class that elegantly handles this process and then place it in your lib directory. Then, if you really wanted to be slick, you might take it another step further and have your models trigger this class during certain actions. Then what do we have? This exact library, that's exactly what this is.
 
-The last thing I will leave you with, to get you thinking, is... where do sweepers lie in the MVC pattern?
+The last thing I will leave you with, to get you thinking, is... where do sweepers lie in the MVC pattern? Without this, things like caching would be extremely difficult. There is a big difference between misplacing code / logic, and organizing logic into a separate module and hooking it in using the API provided by your models. Especially when the logic needs to be triggered by actions invoked on models.
 
 Regardless, if I still haven't convinced you, I hope this library is of some benefit to you. At the very least an example of how to extend Authlogic.
 
