@@ -79,8 +79,6 @@ module AuthlogicOpenid
               return
             end
             
-            raise "#{openid_identifier.inspect} ::: #{controller.params["openid.claimed_id"]}"
-            
             self.attempted_record = klass.send(find_by_openid_identifier_method, openid_identifier)
             
             if !attempted_record
