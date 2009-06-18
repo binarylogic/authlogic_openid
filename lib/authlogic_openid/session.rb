@@ -28,6 +28,17 @@ module AuthlogicOpenid
         rw_config(:find_by_openid_identifier_method, value, :find_by_openid_identifier)
       end
       alias_method :find_by_openid_identifier_method=, :find_by_openid_identifier_method
+      
+      # Add this in your Session object to Auto Register a new user using openid via sreg
+      def auto_register(value=true)
+        auto_register_value(value)
+      end
+      
+      def auto_register_value(value=nil)
+        rw_config(:auto_register,value,false)
+      end
+      
+      alias_method :auto_register=,:auto_register
     end
     
     module Methods
@@ -70,21 +81,39 @@ module AuthlogicOpenid
         def find_by_openid_identifier_method
           self.class.find_by_openid_identifier_method
         end
+
+        def find_by_openid_identifier_method
+          self.class.find_by_openid_identifier_method
+        end
+        
+        def auto_register?
+          self.class.auto_register_value
+        end
         
         def validate_by_openid
           self.remember_me = controller.params[:remember_me] == "true" if controller.params.key?(:remember_me)
+          self.attempted_record = klass.send(find_by_openid_identifier_method, openid_identifier)
+          if !attempted_record
+            if auto_register?
+              self.attempted_record = klass.new :openid_identifier=>openid_identifier
+              attempted_record.save do |result|
+                if result
+                  true
+                else
+                  false
+                end
+              end
+            else
+              errors.add(:openid_identifier, "did not match any users in our database, have you set up your account to use OpenID?")
+            end
+            return
+          end
           controller.send(:authenticate_with_open_id, openid_identifier, :return_to => controller.url_for(:for_session => "1", :remember_me => remember_me?)) do |result, openid_identifier|
             if result.unsuccessful?
               errors.add_to_base(result.message)
               return
             end
             
-            self.attempted_record = klass.send(find_by_openid_identifier_method, openid_identifier)
-            
-            if !attempted_record
-              errors.add(:openid_identifier, "did not match any users in our database, have you set up your account to use OpenID?")
-              return
-            end
           end
         end
         

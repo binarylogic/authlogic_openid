@@ -71,6 +71,8 @@ module AuthlogicOpenid
       # if their OpenID provider supports it.
       def save(perform_validation = true, &block)
         return false if perform_validation && block_given? && authenticate_with_openid? && !authenticate_with_openid
+        
+        return false if new_record? && !openid_complete?
         result = super
         yield(result) if block_given?
         result
@@ -90,7 +92,7 @@ module AuthlogicOpenid
           options = {}
           options[:required] = self.class.openid_required_fields
           options[:optional] = self.class.openid_optional_fields
-          options[:return_to] = session_class.controller.url_for(:for_model => "1")
+          options[:return_to] = session_class.controller.url_for(:for_model => "1",:controller=>"users",:action=>"create")
           
           session_class.controller.send(:authenticate_with_open_id, openid_identifier, options) do |result, openid_identifier, registration|
             if result.unsuccessful?
@@ -102,7 +104,6 @@ module AuthlogicOpenid
             
             return true
           end
-          
           return false
         end
         
@@ -112,9 +113,13 @@ module AuthlogicOpenid
         # Basically you will get a hash of values passed as a single argument. Then just map them as you see fit. Check out
         # the source of this method for an example.
         def map_openid_registration(registration) # :doc:
-          self.name ||= registration[:fullname] if respond_to?(:name) && !registration[:fullname].blank?
-          self.first_name ||= registration[:fullname].split(" ").first if respond_to?(:first_name) && !registration[:fullname].blank?
-          self.last_name ||= registration[:fullname].split(" ").last if respond_to?(:last_name) && !registration[:last_name].blank?
+          registration.symbolize_keys!
+          [self.class.openid_required_fields+self.class.openid_optional_fields].flatten.each do |field|
+            setter="#{field.to_s}=".to_sym
+            if respond_to?(setter)
+              send setter,registration[field]
+            end
+          end
         end
         
         # This method works in conjunction with map_saved_attributes.
